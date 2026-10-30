@@ -1,0 +1,33 @@
+# Secrets / local env
+.env
+
+# Python
+.venv/
+.venv-local/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+
+# Node
+node_modules/
+frontend/dist/
+
+# Data & artifacts (regenerable / possibly sensitive)
+data/raw/
+data/processed/
+data/evidence/
+backend/models/
+models/
+*.log
+*.db
+*.sqlite
+*.sqlite3
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+.shots/

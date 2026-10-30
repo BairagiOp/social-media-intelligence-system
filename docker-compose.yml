@@ -1,0 +1,57 @@
+# SMDPIS — Social Media Data Parser & Intelligence System
+# Usage: docker compose up --build
+# Frontend: http://localhost:8080   API: http://localhost:8000/api/health
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: smdpis
+      POSTGRES_PASSWORD: smdpis
+      POSTGRES_DB: smdpis
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U smdpis -d smdpis"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      SMDPIS_ENV: production
+      SMDPIS_LOG_LEVEL: INFO
+      SMDPIS_SECRET_KEY: ${SMDPIS_SECRET_KEY:-change-me-to-a-long-random-string}
+      SMDPIS_AUTO_BOOTSTRAP: "true"
+      SMDPIS_DATABASE_URL: postgresql+psycopg2://smdpis:smdpis@postgres:5432/smdpis
+      SMDPIS_CORS_ORIGINS: http://localhost:8080,http://127.0.0.1:8080
+      SMDPIS_DATA_DIR: /app/data
+      SMDPIS_MODEL_DIR: /app/backend/models
+    volumes:
+      - smdpis_data:/app/data
+      - smdpis_models:/app/backend/models
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  smdpis_data:
+  smdpis_models:

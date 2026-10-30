@@ -1,0 +1,228 @@
+{
+  "note": "SMDPIS does not download datasets automatically. Entries below are curated recommendations — visit the linked source, review the license, download manually, then upload via the Dataspace page. 'locally_available: true' means the dataset ships with this repository (synthetic sample data).",
+  "categories": [
+    {
+      "id": "sentiment",
+      "name": "Sentiment Analysis",
+      "ml_task": "sentiment",
+      "description": "Classify text tone as positive / neutral / negative.",
+      "required_columns": ["text", "label"],
+      "optional_columns": ["username", "platform", "timestamp"],
+      "min_records": 500
+    },
+    {
+      "id": "bot_detection",
+      "name": "Bot / Automated-Account Detection",
+      "ml_task": "bot_detection",
+      "description": "Estimate automated-account likelihood from profile and posting-pattern features.",
+      "required_columns": ["username", "followers", "following", "account_age", "timestamp", "text", "is_automated"],
+      "optional_columns": ["post_count", "posting_frequency", "likes", "comments", "shares"],
+      "min_records": 1000
+    },
+    {
+      "id": "misinformation",
+      "name": "Misinformation Classification",
+      "ml_task": "misinformation",
+      "description": "Model classification of content patterns (requires human verification).",
+      "required_columns": ["text", "misinfo_label"],
+      "optional_columns": ["headline", "domain", "source", "url"],
+      "min_records": 1000
+    },
+    {
+      "id": "topic_model",
+      "name": "Topic Modeling",
+      "ml_task": "topic_model",
+      "description": "Unsupervised discovery of topical structure with TF-IDF + NMF.",
+      "required_columns": ["text"],
+      "optional_columns": ["timestamp", "username", "platform"],
+      "min_records": 100
+    },
+    {
+      "id": "social_network_analysis",
+      "name": "Social Network Analysis",
+      "ml_task": "network",
+      "description": "Build interaction graphs from mentions, replies and shares.",
+      "required_columns": ["username", "text"],
+      "optional_columns": ["reply_to_username", "shared_from_username", "platform", "timestamp"],
+      "min_records": 500
+    }
+  ],
+  "datasets": [
+    {
+      "name": "SMDPIS Synthetic Sample",
+      "source": "Generated locally by scripts/generate_sample_data.py",
+      "license": "CC0-1.0 (synthetic, no real individuals)",
+      "dataset_type": "Synthetic social-media posts",
+      "records": "10000",
+      "required_columns": [
+        "text", "label", "username", "platform", "timestamp", "followers",
+        "following", "account_age", "post_count", "posting_frequency",
+        "likes", "comments", "shares", "misinfo_label", "is_automated",
+        "domain", "source", "url", "reply_to_username", "shared_from_username"
+      ],
+      "ml_task": "all",
+      "link": "local://data/sample/smdp_posts.csv",
+      "labels_available": true,
+      "locally_available": true,
+      "category": "sentiment",
+      "notes": "Trains every task out of the box: sentiment, bot detection, misinformation and topics."
+    },
+    {
+      "name": "Twitter Sentiment Analysis (Sentiment140)",
+      "source": "Kaggle",
+      "license": "CC0 / research use — verify current terms on the Kaggle page",
+      "dataset_type": "Historical tweet corpus with polarity labels",
+      "records": "1,600,000",
+      "required_columns": ["text", "label"],
+      "ml_task": "sentiment",
+      "link": "https://www.kaggle.com/datasets/kazanova/sentiment140",
+      "labels_available": true,
+      "category": "sentiment",
+      "notes": "Rename 'text' and 'sentiment' columns to text/label after download."
+    },
+    {
+      "name": "SemEval Twitter Sentiment Datasets",
+      "source": "Kaggle / SemEval workshop",
+      "license": "Research use — check task page for terms",
+      "dataset_type": "Annotated tweets (message + sentiment)",
+      "records": "~50,000",
+      "required_columns": ["text", "label"],
+      "ml_task": "sentiment",
+      "link": "https://www.kaggle.com/datasets/paolapetrov/semeval-2017-tweets",
+      "labels_available": true,
+      "category": "sentiment"
+    },
+    {
+      "name": "Twitter Human-Bot Dataset (AST bot baseline)",
+      "source": "Kaggle / research releases",
+      "license": "Varies per dataset — review before use",
+      "dataset_type": "Accounts with profile & behavioural features + bot labels",
+      "records": "~10,000–500,000",
+      "required_columns": [
+        "username", "followers", "following", "account_age", "timestamp",
+        "text", "is_automated"
+      ],
+      "ml_task": "bot_detection",
+      "link": "https://www.kaggle.com/search?q=twitter+bot+dataset",
+      "labels_available": true,
+      "category": "bot_detection",
+      "notes": "Map bot label columns (is_bot/bot_label) to is_automated using manual column mapping."
+    },
+    {
+      "name": "Botometer generic accounts samples",
+      "source": "OSoMe / Indiana University",
+      "license": "Check distribution terms on the project page",
+      "dataset_type": "Account feature tables for automated-account research",
+      "records": "varies",
+      "required_columns": [
+        "username", "followers", "following", "account_age", "post_count", "is_automated"
+      ],
+      "ml_task": "bot_detection",
+      "link": "https://botometer.osome.iu.edu/",
+      "labels_available": true,
+      "category": "bot_detection"
+    },
+    {
+      "name": "LIAR Fake News Dataset",
+      "source": "Kaggle / Wang (2017)",
+      "license": "CC BY-SA — attribution required",
+      "dataset_type": "PolitiCheck-style statements with reliability labels",
+      "records": "12,836",
+      "required_columns": ["text", "misinfo_label"],
+      "optional_columns": ["headline", "source"],
+      "ml_task": "misinformation",
+      "link": "https://www.kaggle.com/datasets/clmentbisaillon/fake-and-real-news-dataset",
+      "labels_available": true,
+      "category": "misinformation"
+    },
+    {
+      "name": "Fake News Dataset (true vs fake articles)",
+      "source": "Kaggle",
+      "license": "CC0 — verify dataset page",
+      "dataset_type": "News articles labelled real/fake",
+      "records": "~44,000",
+      "required_columns": ["text", "misinfo_label"],
+      "optional_columns": ["headline", "title"],
+      "ml_task": "misinformation",
+      "link": "https://www.kaggle.com/datasets/crowdflower/news-category-library",
+      "labels_available": true,
+      "category": "misinformation",
+      "notes": "Add a binary misinfo_label (1 = fake) before uploading."
+    },
+    {
+      "name": "FEVER Fact Extraction & Verification",
+      "source": "fever.ai / Zenodo",
+      "license": "CC BY-SA",
+      "dataset_type": "Claim / evidence pairs with SUPPORTS/REFUTES labels",
+      "records": "~185,000",
+      "required_columns": ["text", "misinfo_label"],
+      "optional_columns": ["evidence", "source"],
+      "ml_task": "misinformation",
+      "link": "https://fever.ai/",
+      "labels_available": true,
+      "category": "misinformation"
+    },
+    {
+      "name": "20 Newsgroups",
+      "source": "UCI / scikit-learn fetcher",
+      "license": "Public (original terms apply)",
+      "dataset_type": "Discussion posts across 20 topics",
+      "records": "18,846",
+      "required_columns": ["text"],
+      "ml_task": "topic_model",
+      "link": "https://scikit-learn.org/stable/datasets/real_world.html",
+      "labels_available": true,
+      "category": "topic_model"
+    },
+    {
+      "name": "AG News Topic Classification",
+      "source": "Hugging Face Datasets",
+      "license": "Check dataset card",
+      "dataset_type": "News headlines + descriptions with topic labels",
+      "records": "120,000",
+      "required_columns": ["text"],
+      "optional_columns": ["label"],
+      "ml_task": "topic_model",
+      "link": "https://huggingface.co/datasets/ag_news",
+      "labels_available": true,
+      "category": "topic_model"
+    },
+    {
+      "name": "Reddit submissions sample (Pushshift style)",
+      "source": "Hugging Face Datasets",
+      "license": "Check dataset card for each mirror",
+      "dataset_type": "Public Reddit posts with author/reply structure",
+      "records": "varies",
+      "required_columns": ["username", "text", "timestamp"],
+      "optional_columns": ["reply_to_username", "platform"],
+      "ml_task": "network",
+      "link": "https://huggingface.co/datasets?search=reddit",
+      "labels_available": false,
+      "category": "social_network_analysis"
+    },
+    {
+      "name": "Social network interaction edge lists (UCI)",
+      "source": "UCI Machine Learning Repository",
+      "license": "CC BY 4.0 (per dataset)",
+      "dataset_type": "User–user interaction edge lists",
+      "records": "varies",
+      "required_columns": ["source_user", "target_user", "interaction_type", "timestamp"],
+      "ml_task": "network",
+      "link": "https://archive.ics.uci.edu/datasets?tag=network",
+      "labels_available": false,
+      "category": "social_network_analysis"
+    },
+    {
+      "name": "Wikipedia adminship / notability discussions",
+      "source": "Zenodo",
+      "license": "Check record page",
+      "dataset_type": "Structured discussion threads for text experiments",
+      "records": "varies",
+      "required_columns": ["text"],
+      "ml_task": "topic_model",
+      "link": "https://zenodo.org/search?q=social%20media%20dataset",
+      "labels_available": false,
+      "category": "topic_model"
+    }
+  ]
+}
